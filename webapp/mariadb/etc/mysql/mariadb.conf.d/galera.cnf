@@ -1,0 +1,18 @@
+########################################
+# DATS35 GALERA CLUSTER CONFIGURATION: #
+########################################
+###########
+# galera: #
+###########
+[mysqld]
+binlog_format=ROW
+default-storage-engine=InnoDB
+innodb_autoinc_lock_mode=2
+wsrep_on=ON
+wsrep_provider=/usr/lib/galera/libgalera_smm.so
+wsrep_cluster_name="dats35_cluster"
+wsrep_sst_method=rsync
+bind-address=0.0.0.0
+#################
+# setup_all.sh: #
+#################

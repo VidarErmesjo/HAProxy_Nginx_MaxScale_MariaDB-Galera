@@ -1,0 +1,66 @@
+# MaxScale documentation on GitHub:
+# https://github.com/mariadb-corporation/MaxScale/blob/2.3/Documentation/Documentation-Contents.md
+
+# Complete list of configuration options:
+# https://github.com/mariadb-corporation/MaxScale/blob/2.3/Documentation/Getting-Started/Configuration-Guide.md
+
+# This service enables the use of the MaxAdmin interface
+# MaxScale administration guide:
+# https://github.com/mariadb-corporation/MaxScale/blob/2.3/Documentation/Reference/MaxAdmin.md
+# Global parameters
+
+[maxscale]
+threads=auto
+# this enables external access to the REST API outside of localhost
+# please review / modify for any public / non development environments
+#admin_host=localhost
+
+# Servers:
+[db1]
+type=server
+address=172.17.0.6
+port=3306
+protocol=MariaDBbackend
+serv_weight=2
+
+[db2]
+type=server
+address=172.17.0.7
+port=3306
+protocol=MariaDBBackend
+serv-weight=1
+
+[db3]
+type=server
+address=172.17.0.8
+port=3306
+protocol=MariaDBBackend
+serv-weight=1
+
+[MariaDB-Monitor]
+type=monitor
+module=galeramon
+servers=db1,db2,db3
+user=maxscaleuser
+password=maxscalepass
+moitor_interval=2000
+disable_master_failback=1
+
+[Read-Write-Service]
+type=service
+router=readwritesplit
+servers=db1,db2,db3
+user=maxscaleuser
+password=maxscalepass
+slave_select_criteria=LEAST_GLOBAL_CONNECTIONS
+master_failure_mode=error_on_write
+max_slave_connections=1
+weghtby=serv_weight
+enable_root_user=true
+
+[Read-Write-Listener]
+type=listener
+service=Read-Write-Service
+protocol=MariaDBClient
+port=3306
+address=0.0.0.0
