@@ -1,24 +1,12 @@
 #! /bin/bash
 #
-#################################
-# PORTFOLIO EXAM 2 BY GROUP 35: #
-#################################
-#
-# The script file setup_all.sh should run all the tasks in a proper order to do all the
-# tasks automatically without any manual intervention (you can have separate script files for
-# different tasks and call them in the setup_all.sh). THE CLOUD SETUP (TASKS 2 TO 5) CREATED BY
-# RUNNING THIS SCRIPT WILL BE CHECKED AND EVALUATED (NO SEPARATE CHECKS WILL BE DOE BY RUNNING
-# OTHER INDIVIDUAL SCRIPT FILES IF YOU HAVE). THEREFORE, MAKE SURE THAT ALL POSSIBLE ERRORS ARE HANDLED
-# PROPERLY SO THAT ALL THE WORKING SCRIPTS RUN, AND NON-WORKING SCRIPTS ARE SKIPPED OR IGNORED WITH
-# PROPER MESSAGES IN THE MAIN SCRIPT FILE, setup_all.sh.
-#
 # Timer:
 SECONDS=0
 
 ######################
 # SOURCE PARAMETERS: #
 ######################
-source dats35-params.sh
+source params.sh
 
 ########################
 # PRUNE SETUP & RESET: #
@@ -74,12 +62,11 @@ fi
 # SETUP DATABASE PROXY: #
 #########################
 # Run script:
-./setup_dbproxy.sh
+#./setup_dbproxy.sh
 
 #######################
 # DEBUGING & TESTING: #
 #######################
-echo ""
 echo "$(tput setaf 2)Script execution time: $SECONDS seconds$(tput sgr 0)"
 #sudo docker exec $db1_container mariadb --user=root --password=$rootpass --execute="SHOW STATUS LIKE 'wsrep_cluster_size'"
 #sudo docker exec $db1_container mariadb --user=root --password=$rootpass --execute="CREATE DATABASE studentinfo"

@@ -57,6 +57,16 @@ export db2_hostname="dbgc2"
 export db3_hostname="dbgc3"
 export dbproxy_hostname="maxscale"
 
+# host IP's:
+export web1_IP="172.17.0.2"
+export web2_IP="172.17.0.3"
+export web3_IP="172.17.0.4"
+export lb_IP="172.17.0.5"
+export db1_IP="172.17.0.6"
+export db2_IP="172.17.0.7"
+export db3_IP="172.17.0.8"
+export dbproxy_IP="172.17.0.9"
+
 # ports:
 export lb_port=80
 
