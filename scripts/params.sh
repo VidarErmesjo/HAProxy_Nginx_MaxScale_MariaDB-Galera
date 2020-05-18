@@ -1,20 +1,5 @@
 #! /bin/bash
 #
-# All the shell scripts should be fully parameterized to avoid any hard coding of parameter values
-# inside the scripts.
-# This should be done by placing all the parameters including the openrc
-# parameters (ALTO project name, passwords, etc.; no separate openrc file) in a single parameter
-# file named as dats35-params.sh; the parameters are accessed from the scripts by sourcing this
-# file. ALL THE SCTIPT FILES SHOULD BE RUNNABLE ON ANY UBUNTU 18.04-BASED DOCKER HOST MACHINE JUST
-# BY CHANGING THE REQUIRED PARAMETERS IN THE PARAMETER FILE BUT _WITHOUT CHANGING ANY SCRIPT FILE_.
-#
-# ONLY BASH, PYTHON, AND DOCKER COMMANDS are allowed in the scripts. DOCUMENT SCRIPTS WITH
-# APPROPRIATE COMMENTS TO MAKE THE CODE READABLE AND UNDERSTANDABLE.
-#
-# BE ADVISED NOT TO RUN AND TEST YOUR SCRIPTS IN THE ALREADY WORKING SETUP (IF ALREADY DONE, SAY
-# MANUAKKY) IN DATS35-VM TO AVOID MESSING IT UP. USE A VIRTUAL MACHINE IN YOUR LOVAL MACHINE WHEN
-# YOU CODE, RUN, AND TEST YOUR SCRIPTS.
-#
 
 # openrc:
 export OS_USERNAME=dats35
@@ -40,7 +25,7 @@ export web1_container="web1"
 export web2_container="web2"
 export web3_container="web3"
 export lb_container="lb"
-export db0_container="bootstrap"
+export bootstrap_container="bootstrap"
 export db1_container="db1"
 export db2_container="db2"
 export db3_container="db3"
@@ -51,7 +36,7 @@ export web1_hostname="web1"
 export web2_hostname="web2"
 export web3_hostname="web3"
 export lb_hostname="haproxy"
-export db0_hostname="dbgc0"
+export bootstrap_hostname="bootstrap"
 export db1_hostname="dbgc1"
 export db2_hostname="dbgc2"
 export db3_hostname="dbgc3"
@@ -62,7 +47,8 @@ export web1_IP="172.17.0.2"
 export web2_IP="172.17.0.3"
 export web3_IP="172.17.0.4"
 export lb_IP="172.17.0.5"
-export db1_IP="172.17.0.6"
+export bootstrap_IP="172.17.0.6"
+export db1_IP=$bootstrap_IP
 export db2_IP="172.17.0.7"
 export db3_IP="172.17.0.8"
 export dbproxy_IP="172.17.0.9"
