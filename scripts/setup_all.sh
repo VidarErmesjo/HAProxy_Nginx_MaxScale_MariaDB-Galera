@@ -58,6 +58,12 @@ fi
 # Run script:
 ./setup_db.sh
 
+# Source database:
+#sudo docker exec $db1_container mariadb --user=root --password=rootpass < ../webapp/database/mariadb-secure-installation.sql
+#sudo docker exec $db1_container mariadb --user=root --password=rootpass --execute="CREATE DATABASE $db_name"
+#sudo cp ../webapp/database/studentinfo-db.sql $HOME/volumes/$db1_container/var/lib/mysql
+#sudo docker exec $db1_container mariadb --user=root --password=rootpass --database=$db_name --execute="USE $db_name; SOURCE /var/lib/mysql/studentinfo-db.sql;"
+
 #########################
 # SETUP DATABASE PROXY: #
 #########################

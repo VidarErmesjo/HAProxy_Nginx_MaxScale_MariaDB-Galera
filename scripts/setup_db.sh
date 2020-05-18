@@ -48,9 +48,11 @@ while [ ! "$(sudo docker exec $bootstrap_container mysqladmin ping --user=root -
 done 2>/dev/null
 echo
 sudo docker exec $bootstrap_container mariadb-admin ping --user=root --password=rootpass --host=$bootstrap_hostname
-#sudo sed -i 's/safe_to_bootstrap: 0/safe_to_bootstrap: 1/g' $HOME/volumes/$db1_container/var/lib/mysql/grastate.dat
-
-#sudo docker exec $db1_container mariadb --user=root --password=rootpass < ../webapp/database/mariadb-secure-installation.sql 
+# Source database:
+#sudo docker exec $db1_container mariadb --user=root --password=rootpass < ../webapp/database/mariadb-secure-installation.sql
+sudo docker exec $bootstrap_container mariadb --user=root --password=rootpass --execute="CREATE DATABASE $db_name"
+sudo cp ../webapp/database/studentinfo-db.sql $HOME/volumes/$db1_container/var/lib/mysql
+sudo docker exec $bootstrap_container mariadb --user=root --password=rootpass --database=$db_name --execute="USE $db_name; SOURCE /var/lib/mysql/studentinfo-db.sql;" 
 
 #####################
 # db2 (MariaDB #2): #
@@ -118,8 +120,6 @@ sudo docker run \
 		--wsrep-node-address=$db3_hostname \
 		--wsrep-node-name=$db3_container
 
-#sudo docker exec $db1_container mariadb --user=root --password=rootpass < ../webapp/database/mariadb-secure-installation.sql 
-
 echo -n "$(tput setaf 3)Waiting$(tput sgr 0)" 
 while	[ ! "$(sudo docker ps -qa -f status=exited -f name=$db2_container)" ] && \
 		[ ! "$(sudo docker ps -qa -f status=exited -f name=$db3_container)" ]; do
@@ -134,10 +134,6 @@ sudo docker kill $bootstrap_container
 # db1 (MariaDB #1): #
 #####################
 echo "$(tput setaf 3)MariaDB #1:$(tput sgr 0)" 
-# Files/folder:
-#sudo mkdir $HOME/volumes/$db1_container 2>/dev/null
-#sudo cp -a ../webapp/mariadb/. $HOME/volumes/$db1_container 2>/dev/null
-
 # Configure:
 #echo wsrep_cluster_address=gcomm://$db1_hostname,$db2_hostname,$db3_hostname >> $HOME/volumes/$db2_container/etc/mysql/mariadb.conf.d/galera.cnf
 #echo wsrep_node_address=$db2_hostname >> $HOME/volumes/$db2_container/etc/mysql/mariadb.conf.d/galera.cnf
@@ -161,8 +157,13 @@ sudo docker run \
 		--wsrep-cluster-address=gcomm://$bootstrap_hostname,$db1_hostname,$db2_hostname,$db3_hostname \
 		--wsrep-node-address=$db1_hostname \
 		--wsrep-node-name=$db1_container
+# Wait for server to start:
+#echo -n "$(tput setaf 3)Waiting$(tput sgr 0)"
+#while [ ! "$(sudo docker exec $db1_container mysqladmin ping --user=root --password=rootpass --host=$db1_hostname)" = "mysqld is alive" ]; do
+#	echo -n "$(tput setaf 3).$(tput sgr 0)"
+#	sleep 1s
+#done 2>/dev/null
+#echo
+#sudo docker exec $db1_container mariadb-admin ping --user=root --password=rootpass --host=$db1_hostname
 
-
-#sudo docker exec $db2_container mariadb --user=root --password=rootpass < ../webapp/database/mariadb-secure-installation.sql 
-#sudo docker exec $db3_container mariadb --user=root --password=rootpass < ../webapp/database/mariadb-secure-installation.sql 
 exit 0
