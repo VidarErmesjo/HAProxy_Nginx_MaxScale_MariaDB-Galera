@@ -1,4 +1,4 @@
- #! /bin/bash
+#! /bin/bash
 if [ ! "$db_image" ]; then
     echo "Error: Please run main script: setup_all.sh"
     exit 1
@@ -33,7 +33,7 @@ sudo docker run \
 	$db_image \
 		--wsrep-cluster-address=gcomm:// \
 		--wsrep-node-address=$bootstrap_hostname \
-		--wsrep-node-name=$bootstrap_container 
+		--wsrep-node-name=$bootstrap_container
 
 echo -n "$(tput setaf 3)Waiting for MariaDB-server to start$(tput sgr 0)"
 while [ ! "$(sudo docker exec $bootstrap_container mysqladmin ping --user=root --password=rootpass --host=$bootstrap_hostname)" = "mysqld is alive" ]; do
@@ -42,11 +42,7 @@ while [ ! "$(sudo docker exec $bootstrap_container mysqladmin ping --user=root -
 done 2>/dev/null
 echo
 sudo docker exec $bootstrap_container mariadb-admin ping --user=root --password=rootpass --host=$bootstrap_hostname
-
-# Source database:
-sudo docker exec $bootstrap_container mariadb --user=root --password=rootpass --execute="CREATE DATABASE $db_name"
-sudo cp ../webapp/database/studentinfo-db.sql $HOME/volumes/$db1_container/var/lib/mysql
-sudo docker exec $bootstrap_container mariadb --user=root --password=rootpass --database=$db_name --execute="USE $db_name; SOURCE /var/lib/mysql/studentinfo-db.sql;" 
+sudo docker exec $bootstrap_container mariadb --user=root --password=rootpass --execute="CREATE DATABASE studentinfo;"
 
 #####################
 # db2 (MariaDB #2): #
@@ -75,11 +71,6 @@ sudo docker run \
 		--wsrep-node-address=$db2_hostname \
 		--wsrep-node-name=$db2_container
 
-# Configure:
-echo wsrep_cluster_address=gcomm://$db1_hostname,$db2_hostname,$db3_hostname >> $HOME/volumes/$db2_container/etc/mysql/mariadb.conf.d/galera.cnf
-echo wsrep_node_address=$db2_hostname >> $HOME/volumes/$db2_container/etc/mysql/mariadb.conf.d/galera.cnf
-echo wsrep_node_name=$db2_container >> $HOME/volumes/$db2_container/etc/mysql/mariadb.conf.d/galera.cnf
-
 #####################
 # db3 (MariaDB #3): #
 #####################
@@ -106,11 +97,6 @@ sudo docker run \
 		--wsrep-cluster-address=gcomm://$db1_hostname,$db2_hostname,$db3_hostname \
 		--wsrep-node-address=$db3_hostname \
 		--wsrep-node-name=$db3_container
-
-# Configure:
-echo wsrep_cluster_address=gcomm://$db1_hostname,$db2_hostname,$db3_hostname >> $HOME/volumes/$db3_container/etc/mysql/mariadb.conf.d/galera.cnf
-echo wsrep_node_address=$db3_hostname >> $HOME/volumes/$db3_container/etc/mysql/mariadb.conf.d/galera.cnf
-echo wsrep_node_name=$db3_container >> $HOME/volumes/$db3_container/etc/mysql/mariadb.conf.d/galera.cnf
 
 echo -n "$(tput setaf 3)Waiting for containers to exit$(tput sgr 0)" 
 while	[ ! "$(sudo docker ps -qa -f status=exited -f name=$db2_container)" ] && \
@@ -146,6 +132,7 @@ sudo docker run \
 		--wsrep-node-address=$db1_hostname \
 		--wsrep-node-name=$db1_container
 
+
 echo -n "$(tput setaf 3)Waiting for MariaDB-server to start$(tput sgr 0)"
 while [ ! "$(sudo docker exec $db1_container mysqladmin ping --user=root --password=rootpass --host=$db1_hostname)" = "mysqld is alive" ]; do
 	echo -n "$(tput setaf 3).$(tput sgr 0)"
@@ -154,9 +141,19 @@ done 2>/dev/null
 echo
 sudo docker exec $db1_container mariadb-admin ping --user=root --password=rootpass --host=$db1_hostname
 
-# Configure:
-echo wsrep_cluster_address=gcomm://$db1_hostname,$db2_hostname,$db3_hostname >> $HOME/volumes/$db1_container/etc/mysql/mariadb.conf.d/galera.cnf
-echo wsrep_node_address=$db1_hostname >> $HOME/volumes/$db1_container/etc/mysql/mariadb.conf.d/galera.cnf
-echo wsrep_node_name=$db1_container >> $HOME/volumes/$db1_container/etc/mysql/mariadb.conf.d/galera.cnf
+# Setup users:
+#QUERY="ALTER USER 'root'@'localhost' IDENTIFIED BY 'rootpass';"
+#QUERY="${QUERY} CREATE USER 'maxscaleuser'@'maxscale' IDENTIFIED BY 'maxscalepass';"
+#QUERY="${QUERY} DELETE FROM mysql.user WHERE User='';"
+#QUERY="${QUERY} DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');"
+#QUERY="${QUERY} DELETE FROM mysql.user WHERE User='maxscaleuser' AND Host NOT IN ('maxscale', 'localhost', '127.0.0.1', '::1');"
+#QUERY="${QUERY} DROP DATABASE IF EXISTS test;"
+#QUERY="${QUERY} DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';"
+#QUERY="${QUERY} FLUSH PRIVILEGES;"
+#sudo docker exec $db1_container mariadb --user=root --password=rootpass --execute="$QUERY"
+
+#sudo docker exec $db1_container mariadb --user=root --password=rootpass <<_EOF_
+#CREATE USER 'maxscaleuser'@'maxscale' IDENTIFIED BY 'maxscalepass';
+#_EOF_
 
 exit 0

@@ -58,28 +58,12 @@ fi
 # Run script:
 ./setup_db.sh
 
-# Source database:
-#sudo docker exec $db1_container mariadb --user=root --password=rootpass < ../webapp/database/mariadb-secure-installation.sql
-#sudo docker exec $db1_container mariadb --user=root --password=rootpass --execute="CREATE DATABASE $db_name"
-#sudo cp ../webapp/database/studentinfo-db.sql $HOME/volumes/$db1_container/var/lib/mysql
-#sudo docker exec $db1_container mariadb --user=root --password=rootpass --database=$db_name --execute="USE $db_name; SOURCE /var/lib/mysql/studentinfo-db.sql;"
-
 #########################
 # SETUP DATABASE PROXY: #
 #########################
 # Run script:
-#./setup_dbproxy.sh
+./setup_dbproxy.sh
 
-#######################
-# DEBUGING & TESTING: #
-#######################
 echo "$(tput setaf 2)Script execution time: $SECONDS seconds$(tput sgr 0)"
-#sudo docker exec $db1_container mariadb --user=root --password=$rootpass --execute="SHOW STATUS LIKE 'wsrep_cluster_size'"
-#sudo docker exec $db1_container mariadb --user=root --password=$rootpass --execute="CREATE DATABASE studentinfo"
-#sudo docker exec $db1_container mariadb --user=root --password=$rootpass --execute="USE studentinfo"
-#sudo docker exec $db1_container mariadb --user=root --password=$rootpass --execute="SOURCE /var/lib/mysql/studentinfo-db.sql"
-#sudo docker exec $db1_container mariadb --user=root --password=$rootpass --execute="USE studentinfo; SELECT * FROM postaltable"
-#sudo docker exec $db1_container mariadb --user=root --password=$rootpass --execute="USE studentinfo; SELECT * FROM students"
-#sudo docker exec $db1_container mariadb --user=root --password=$rootpass --execute="USE studentinfo; SELECT * FROM degree"
-#sudo docker exec $db1_container mariadb --user=root --password=$rootpass --execute="SHOW STATUS LIKE 'wsrep_cluster_size'"
+sudo docker exec -it db3 mariadb -uroot "-prootpass" -e 'select variable_name, variable_value from information_schema.global_status where variable_name in ("wsrep_cluster_size", "wsrep_local_state_comment", "wsrep_cluster_status", "wsrep_incoming_addresses")'
 exit 0

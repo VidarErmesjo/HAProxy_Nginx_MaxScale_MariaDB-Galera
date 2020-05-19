@@ -8,8 +8,8 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 error_reporting(0);
 
 $host = "maxscale";
-$user = "dats35"; // change to your ALTO user
-$passwd = "race just killed"; // change to your ALTO password
+$user = "maxscaleuser"; // change to your ALTO user
+$passwd = "maxscalepass"; // change to your ALTO password
 $db = "studentinfo";
 
 

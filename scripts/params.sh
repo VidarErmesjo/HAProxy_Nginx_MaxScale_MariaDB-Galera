@@ -58,3 +58,9 @@ export lb_port=80
 
 # database:
 export db_name="studentinfo"
+
+# directories:
+export web_directory="../webapp/phpcode/"
+export db_directory="../webapp/mariadb/"
+export lb_directory="../webapp/haproxy"
+export dbproxy_directory="../webapp/maxscale/"
